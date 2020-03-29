@@ -23,8 +23,8 @@ func CurrentUser() gin.HandlerFunc {
 	}
 }
 
-// AuthRequired 需要登录
-func AuthRequired() gin.HandlerFunc {
+// AuthUserRequired 需要登录
+func AuthUserRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if user, _ := c.Get("user"); user != nil {
 			if _, ok := user.(*model.User); ok {
@@ -32,7 +32,6 @@ func AuthRequired() gin.HandlerFunc {
 				return
 			}
 		}
-
 		c.JSON(200, serializer.Response{
 			Status: 401,
 			Msg:    "需要登录",

@@ -3,6 +3,7 @@ package api
 import (
 	"giligili/serializer"
 	"giligili/service"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func UserLogin(c *gin.Context) {
 	var service service.UserLoginService
 	if err := c.ShouldBind(&service); err == nil {
 		if user, err := service.Login(); err != nil {
+			c.SetCookie("user_id", strconv.FormatUint(uint64(user.ID), 10), 3600, "/", "localhost", false, true)
 			c.JSON(200, err)
 		} else {
 			// 设置Session
@@ -44,15 +46,16 @@ func UserLogin(c *gin.Context) {
 	}
 }
 
-// UserMe 用户详情
-func UserMe(c *gin.Context) {
-	user := CurrentUser(c)
-	res := serializer.BuildUserResponse(*user)
-	c.JSON(200, res)
+// GetUser 用户详情
+func GetUser(c *gin.Context) {
+	service := service.ShowUserService{}
+	user := service.Show(c.Param("id"))
+	c.JSON(200, user)
 }
 
 // UserLogout 用户登出
 func UserLogout(c *gin.Context) {
+	c.SetCookie("user_id", "", 3600, "/", "localhost", false, true)
 	s := sessions.Default(c)
 	s.Clear()
 	s.Save()

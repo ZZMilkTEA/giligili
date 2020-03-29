@@ -16,6 +16,7 @@ type Video struct {
 	Info   string
 	URL    string
 	Avatar string
+	UserID uint
 }
 
 // AvatarURL 封面地址
