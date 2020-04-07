@@ -3,23 +3,29 @@ package middleware
 import (
 	"giligili/model"
 	"giligili/serializer"
-
-	"github.com/gin-contrib/sessions"
+	"giligili/token"
 	"github.com/gin-gonic/gin"
 )
 
 // CurrentUser 获取登录用户
 func CurrentUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session := sessions.Default(c)
-		uid := session.Get("user_id")
-		if uid != nil {
-			user, err := model.GetUser(uid)
-			if err == nil {
-				c.Set("user", &user)
+		tokenStr, _ := c.Cookie("Token")
+		if tokenStr == "" {
+			c.Next()
+		} else {
+			claim, err := token.VerifyAction(tokenStr)
+			if err != nil {
+				c.Next()
+			} else {
+				uid := claim.UserID
+				user, err := model.GetUser(uid)
+				if err == nil {
+					c.Set("user", &user)
+				}
+				c.Next()
 			}
 		}
-		c.Next()
 	}
 }
 
@@ -36,6 +42,29 @@ func AuthUserRequired() gin.HandlerFunc {
 			Status: 401,
 			Msg:    "需要登录",
 		})
+		c.Abort()
+	}
+}
+
+// AuthUserRequired 需要登录
+func AuthInspectorRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if user, _ := c.Get("user"); user != nil {
+			if userModel, ok := user.(*model.User); ok && userModel.Permission >= 1 {
+				c.Next()
+				return
+			} else {
+				c.JSON(200, serializer.Response{
+					Status: 401,
+					Msg:    "需要更高的权限",
+				})
+			}
+		} else {
+			c.JSON(200, serializer.Response{
+				Status: 401,
+				Msg:    "需要登陆",
+			})
+		}
 		c.Abort()
 	}
 }

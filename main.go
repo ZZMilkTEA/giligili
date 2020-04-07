@@ -4,8 +4,6 @@ import (
 	"giligili/conf"
 	"giligili/server"
 	"github.com/gin-gonic/gin"
-	"io"
-	"os"
 )
 
 func main() {
@@ -18,7 +16,7 @@ func main() {
 	// 禁用控制台颜色
 	gin.DisableConsoleColor()
 
-	// 创建记录日志的文件
-	f, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(f)
+	//// 创建记录日志的文件
+	//f, _ := os.Create("gin.log")
+	//gin.DefaultWriter = io.MultiWriter(f)
 }
