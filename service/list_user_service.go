@@ -10,7 +10,7 @@ type ListUserService struct {
 	Start int `form:"start"`
 }
 
-//List 所有用户
+//ListAll 所有用户
 func (service *ListUserService) List() serializer.Response {
 	users := []model.User{}
 	total := 0

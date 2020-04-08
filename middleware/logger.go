@@ -14,7 +14,7 @@ import (
 // 日志记录到文件
 func LoggerToFile() gin.HandlerFunc {
 
-	logFilePath := "./logs/"
+	logFilePath := os.Getenv("LOG_ADDR")
 	logFileName := "system"
 
 	// 日志文件

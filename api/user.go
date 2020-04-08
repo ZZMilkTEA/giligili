@@ -21,28 +21,6 @@ func UserRegister(c *gin.Context) {
 	}
 }
 
-//// UserLogin 用户登录接口 (session)
-//func UserLogin(c *gin.Context) {
-//	var service service.UserLoginService
-//	if err := c.ShouldBind(&service); err == nil {
-//		if user, err := service.Login(); err != nil {
-//			c.SetCookie("user_id", strconv.FormatUint(uint64(user.ID), 10), 3600, "/", "localhost", false, true)
-//			c.JSON(200, err)
-//		} else {
-//			// 设置Session
-//			s := sessions.Default(c)
-//			s.Clear()
-//			s.Set("user_id", user.ID)
-//			s.Save()
-//
-//			res := serializer.BuildUserResponse(user)
-//			c.JSON(200, res)
-//		}
-//	} else {
-//		c.JSON(200, ErrorResponse(err))
-//	}
-//}
-
 // GetUser 用户详情
 func GetUser(c *gin.Context) {
 	service := service.ShowUserService{}
@@ -78,3 +56,25 @@ func DeleteUser(c *gin.Context) {
 	user := service.Delete(c.Param("id"))
 	c.JSON(200, user)
 }
+
+//// UserLogin 用户登录接口 (session)
+//func UserLogin(c *gin.Context) {
+//	var service service.UserLoginService
+//	if err := c.ShouldBind(&service); err == nil {
+//		if user, err := service.Login(); err != nil {
+//			c.SetCookie("user_id", strconv.FormatUint(uint64(user.ID), 10), 3600, "/", "localhost", false, true)
+//			c.JSON(200, err)
+//		} else {
+//			// 设置Session
+//			s := sessions.Default(c)
+//			s.Clear()
+//			s.Set("user_id", user.ID)
+//			s.Save()
+//
+//			res := serializer.BuildUserResponse(user)
+//			c.JSON(200, res)
+//		}
+//	} else {
+//		c.JSON(200, ErrorResponse(err))
+//	}
+//}

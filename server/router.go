@@ -30,12 +30,14 @@ func NewRouter() *gin.Engine {
 		v1.GET("verify", api.Verify)
 		v1.GET("refresh", api.Refresh)
 		v1.GET("sayHello", api.SayHello)
+
 		// 用户登出
 		v1.GET("logout", api.UserLogout)
 
 		//获取用户信息
 		v1.GET("user/:id", api.GetUser)
 		v1.GET("users", api.ListUser)
+
 		// 需要登录保护的
 		authedUser := v1.Group("/")
 		authedUser.Use(middleware.AuthUserRequired())
@@ -51,12 +53,15 @@ func NewRouter() *gin.Engine {
 		authAdmin := v1.Group("/")
 		authAdmin.Use(middleware.AuthInspectorRequired())
 		{
+			//先不忙测审查员鉴权
 			v1.PUT("user/change-permission", api.ChangeUserPermission)
 			v1.DELETE("user/:id", api.DeleteUser)
 		}
 
 		v1.GET("video/:id", api.ShowVideo)
-		v1.GET("videos", api.ListVideo)
+		v1.GET("videos", api.ListAllVideo)
+		v1.GET("not-passed-videos", api.ListNotPassedVideo)
+		v1.GET("passed-videos", api.ListPassedVideo)
 		v1.GET("user/:id/videos", api.ListVideoByUser)
 		// 排行榜
 		v1.GET("rank/daily", api.DailyRank)

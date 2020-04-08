@@ -17,6 +17,7 @@ type Video struct {
 	URL    string
 	Avatar string
 	UserID uint
+	Passed uint //0 待审核，1 审核通过（发布），2 审核不通过
 }
 
 // AvatarURL 封面地址

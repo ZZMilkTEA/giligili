@@ -25,11 +25,33 @@ func ShowVideo(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-// ListVideo 视频列表接口
-func ListVideo(c *gin.Context) {
+// ListAllVideo 视频列表接口
+func ListAllVideo(c *gin.Context) {
 	service := service.ListVideoService{}
 	if err := c.ShouldBind(&service); err == nil {
-		res := service.List()
+		res := service.ListAll()
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, ErrorResponse(err))
+	}
+}
+
+// ListPassedVideo 已通过视频列表接口
+func ListPassedVideo(c *gin.Context) {
+	service := service.ListVideoService{}
+	if err := c.ShouldBind(&service); err == nil {
+		res := service.ListPassed()
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, ErrorResponse(err))
+	}
+}
+
+// ListAllVideo 视频列表接口
+func ListNotPassedVideo(c *gin.Context) {
+	service := service.ListVideoService{}
+	if err := c.ShouldBind(&service); err == nil {
+		res := service.ListNotPassed()
 		c.JSON(200, res)
 	} else {
 		c.JSON(200, ErrorResponse(err))
