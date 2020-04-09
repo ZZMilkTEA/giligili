@@ -3,7 +3,7 @@ info:
   version: 1.0.0
   title: G站项目接口文档
 servers:
-  - url: https://www.gourouting.com/
+  - url: https://www.r3mix4lles.com:9999/
 paths:
   /api/v1/videos:
     $ref: /paths/api/v1/video/list.yaml
