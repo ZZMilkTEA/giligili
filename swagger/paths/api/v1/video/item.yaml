@@ -16,7 +16,7 @@ get:
     '200':
       description: 返回视频列表
       content:
-        application/json:    
+        application/json:
           schema:
             type: object
             properties:
@@ -55,7 +55,7 @@ put:
     '200':
       description: 返回视频列表
       content:
-        application/json:    
+        application/json:
           schema:
             type: object
             properties:

@@ -12,6 +12,8 @@ type Video struct {
 	View      uint64 `json:"view"`
 	User      User   `json:"user"`
 	CreatedAt int64  `json:"created_at"`
+	Status    uint   `json:"status"`
+	Type      uint   `json:"type"`
 }
 
 // BuildVideo 序列化视频
@@ -26,6 +28,8 @@ func BuildVideo(item model.Video) Video {
 		View:      item.View(),
 		User:      BuildUser(user),
 		CreatedAt: item.CreatedAt.Unix(),
+		Status:    item.Status,
+		Type:      item.Type,
 	}
 }
 

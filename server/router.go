@@ -46,8 +46,8 @@ func NewRouter() *gin.Engine {
 			authedUser.DELETE("user/:id/logout", api.UserLogout)
 			// 视频操作
 			authedUser.POST("videos", api.CreateVideo)
-			authedUser.PUT("video/:id", api.UpdateVideo)
-			authedUser.DELETE("video/:id", api.DeleteVideo)
+			authedUser.PUT("videos/:id", api.UpdateVideo)
+			authedUser.DELETE("videos/:id", api.DeleteVideo)
 		}
 		// 需要验证审查员身份的
 		authAdmin := v1.Group("/")
@@ -56,9 +56,11 @@ func NewRouter() *gin.Engine {
 			//先不忙测审查员鉴权
 			v1.PUT("user/change-permission", api.ChangeUserPermission)
 			v1.DELETE("user/:id", api.DeleteUser)
+			v1.PUT("review", api.DoReview)
+			v1.GET("review/:id", api.GetVideo)
 		}
 
-		v1.GET("video/:id", api.ShowVideo)
+		v1.GET("videos/:id", api.ShowVideo)
 		v1.GET("videos", api.ListAllVideo)
 		v1.GET("not-passed-videos", api.ListNotPassedVideo)
 		v1.GET("passed-videos", api.ListPassedVideo)

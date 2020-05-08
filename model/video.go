@@ -16,8 +16,33 @@ type Video struct {
 	Info   string
 	URL    string
 	Avatar string
+	Type   uint //视频分类（分区），暂时用uint类型，0 教育， 1 美食， 2 科技
 	UserID uint
-	Passed uint //0 待审核，1 审核通过（发布），2 审核不通过
+	Status uint //0 待审核，1 审核通过（发布），2 审核不通过
+}
+
+//	通过ID获取视频
+func GetVideoById(Id interface{}) (Video, error) {
+	var video Video
+	result := DB.First(&video, Id)
+	return video, result.Error
+}
+
+//	创建审核日志事务
+func ChangeVideoStatusBusiness(video Video, reviewLog ReviewLog) error {
+	tx := DB.Begin()
+
+	if err := tx.Model(&video).Update("status", reviewLog.StatusBackward).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Create(&reviewLog).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
 
 // AvatarURL 封面地址

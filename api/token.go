@@ -6,11 +6,12 @@ import (
 	"giligili/token"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"time"
 )
 
 func SayHello(c *gin.Context) {
-	strToken, err := c.Cookie("Token")
+	strToken := c.Request.Header.Get("token")
 	claim, err := token.VerifyAction(strToken)
 	if err != nil {
 		c.String(200, err.Error())
@@ -20,38 +21,34 @@ func SayHello(c *gin.Context) {
 }
 
 func UserLogin(c *gin.Context) {
-	var service service.UserLoginService
+	service := service.UserLoginService{}
 	if err := c.ShouldBind(&service); err == nil {
 		if user, err := service.Login(); err == nil {
 			signedToken, err := token.CreateUserToken(user)
 			if err != nil {
-				c.JSON(200, err)
+				c.JSON(200, ErrorResponse(err))
 				return
 			}
-			c.SetCookie("Token", signedToken, 3600, "/", "localhost", false, true)
-			c.JSON(200, signedToken)
+			res := serializer.BuildTokenResponse(signedToken)
+			c.JSON(200, res)
 		} else {
 			c.JSON(200, err)
 			return
 		}
 	} else {
-		c.JSON(http.StatusNotFound, err)
+		c.JSON(200, ErrorResponse(err))
 		return
 	}
 }
 
 func Verify(c *gin.Context) {
-	strToken, err := c.Cookie("Token")
-	if err != nil {
-		c.JSON(200, err)
-		return
-	}
+	strToken := c.Request.Header.Get("token")
 	claim, err := token.VerifyAction(strToken)
 	if err != nil {
-		c.JSON(200, err)
+		c.JSON(200, ErrorResponse(err))
 		return
 	}
-	c.JSON(200, claim)
+	c.JSON(200, serializer.BuildClaimResponse(*claim))
 }
 
 func Refresh(c *gin.Context) {
@@ -70,9 +67,9 @@ func Refresh(c *gin.Context) {
 	c.String(http.StatusOK, signedToken)
 }
 
-// UserLogout 用户登出
+// UserLogout 用户登出 (目前不使用
 func UserLogout(c *gin.Context) {
-	c.SetCookie("Token", "", 3600, "/", "localhost", false, true)
+	c.SetCookie("Token", "", 3600, "/", os.Getenv("DOMAIN"), false, true)
 	c.JSON(200, serializer.Response{
 		Status: 0,
 		Msg:    "登出成功",

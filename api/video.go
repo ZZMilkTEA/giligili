@@ -1,6 +1,7 @@
 package api
 
 import (
+	"giligili/model"
 	"giligili/service"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,8 @@ import (
 
 // CreateVideo 视频投稿
 func CreateVideo(c *gin.Context) {
-	user := CurrentUser(c)
+	v, _ := c.Get("user")
+	user, _ := v.(*model.User)
 	service := service.CreateVideoService{}
 	if err := c.ShouldBind(&service); err == nil {
 		res := service.Create(user)
@@ -22,6 +24,12 @@ func CreateVideo(c *gin.Context) {
 func ShowVideo(c *gin.Context) {
 	service := service.ShowVideoService{}
 	res := service.Show(c.Param("id"))
+	c.JSON(200, res)
+}
+
+func GetVideo(c *gin.Context) {
+	service := service.ShowVideoService{}
+	res := service.GetVideo(c.Param("id"))
 	c.JSON(200, res)
 }
 

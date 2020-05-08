@@ -7,11 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CurrentUser 获取登录用户
+//CurrentUser 获取登录用户(从token)
 func CurrentUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenStr, _ := c.Cookie("Token")
-		if tokenStr == "" {
+		tokenStr := c.Request.Header.Get("token")
+		if tokenStr == "" || tokenStr == "[object Object]" {
 			c.Next()
 		} else {
 			claim, err := token.VerifyAction(tokenStr)
@@ -40,13 +40,13 @@ func AuthUserRequired() gin.HandlerFunc {
 		}
 		c.JSON(200, serializer.Response{
 			Status: 401,
-			Msg:    "需要登录",
+			Msg:    "登陆验证不通过,请重新登陆",
 		})
 		c.Abort()
 	}
 }
 
-// AuthUserRequired 需要登录
+// AuthInspectorRequired 需要审核员登录
 func AuthInspectorRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if user, _ := c.Get("user"); user != nil {

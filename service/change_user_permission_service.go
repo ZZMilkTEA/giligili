@@ -16,7 +16,7 @@ func (service *ChangeUserPermissionService) ChangeUserPermission() serializer.Re
 	err := model.DB.First(&user, service.UserID).Error
 	if err != nil {
 		return serializer.Response{
-			Status: 404,
+			Status: 40004,
 			Msg:    "用户不存在",
 			Error:  err.Error(),
 		}

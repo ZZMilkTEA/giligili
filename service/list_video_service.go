@@ -56,7 +56,7 @@ func (service *ListVideoService) ListPassed() serializer.Response {
 		}
 	}
 
-	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("passed = 1").Find(&videos).Error; err != nil {
+	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 1").Find(&videos).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -84,7 +84,7 @@ func (service *ListVideoService) ListNotPassed() serializer.Response {
 		}
 	}
 
-	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("passed = 0").Find(&videos).Error; err != nil {
+	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 0").Find(&videos).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",

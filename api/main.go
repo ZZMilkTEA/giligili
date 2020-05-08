@@ -6,6 +6,7 @@ import (
 	"giligili/conf"
 	"giligili/model"
 	"giligili/serializer"
+	"giligili/token"
 
 	"github.com/gin-gonic/gin"
 	validator "gopkg.in/go-playground/validator.v8"
@@ -21,10 +22,13 @@ func Ping(c *gin.Context) {
 
 // CurrentUser 获取当前用户
 func CurrentUser(c *gin.Context) *model.User {
-	if user, _ := c.Get("user"); user != nil {
-		if u, ok := user.(*model.User); ok {
-			return u
-		}
+	strToken := c.Request.Header.Get("token")
+	claim, err := token.VerifyAction(strToken)
+	if err != nil {
+		return nil
+	}
+	if user, _ := model.GetUser(claim.UserID); &user != nil {
+		return &user
 	}
 	return nil
 }

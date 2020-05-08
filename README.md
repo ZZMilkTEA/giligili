@@ -5,11 +5,12 @@
 + 用户验证方式从session改为了token，使用的是[jwt-go](https://github.com/dgrijalva/jwt-go)。安全性更好，更加适应REST API的设计风格
 + 使用[file-rotatelogs](https://github.com/lestrrat-go/file-rotatelogs)来进行系统日志记录，设置为输出到文件
 + 对用户增添了权限等级
-+ 准备添加审核视频以及其它管理员后台相关的服务内容
-+ 为视频添加了审核状态
++ 添加审核视频以及其它管理员后台相关的服务内容
++ 为视频添加了
+    + 审核状态
+    + 分区
 + 新建审核日志模型，用来记录审核情况
-
-
++ 上传接口可以根据上传文件的类型来确定上传到OSS的位置
 
 ### 下面是原项目的说明内容
 ***

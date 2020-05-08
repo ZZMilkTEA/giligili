@@ -2,12 +2,12 @@ package service
 
 import (
 	"giligili/serializer"
+	"github.com/google/uuid"
 	"mime"
 	"os"
 	"path/filepath"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/google/uuid"
 )
 
 // UploadTokenService 获得上传oss token的服务
@@ -38,13 +38,23 @@ func (service *UploadTokenService) Post() serializer.Response {
 
 	// 获取扩展名
 	ext := filepath.Ext(service.Filename)
+	mimeType := mime.TypeByExtension(ext)
 
 	// 带可选参数的签名直传。
 	options := []oss.Option{
-		oss.ContentType(mime.TypeByExtension(ext)),
+		oss.ContentType(mimeType),
+		//oss.ContentType("image/png"),
 	}
 
-	key := "upload/avatar/" + uuid.Must(uuid.NewRandom()).String() + ext
+	//根据扩展名分配上传路径
+	var key string
+	switch ext {
+	case ".jpg", ".png":
+		key = "upload/avatar/" + uuid.Must(uuid.NewRandom()).String() + ext
+	case ".mp4":
+		key = "upload/videos/" + uuid.Must(uuid.NewRandom()).String() + ext
+	}
+
 	// 签名直传。
 	signedPutURL, err := bucket.SignURL(key, oss.HTTPPut, 600, options...)
 	if err != nil {
@@ -54,7 +64,7 @@ func (service *UploadTokenService) Post() serializer.Response {
 			Error:  err.Error(),
 		}
 	}
-	// 查看图片
+	// 查看资源
 	signedGetURL, err := bucket.SignURL(key, oss.HTTPGet, 600)
 	if err != nil {
 		return serializer.Response{

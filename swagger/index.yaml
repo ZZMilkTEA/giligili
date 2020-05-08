@@ -7,8 +7,8 @@ servers:
 paths:
   /api/v1/videos:
     $ref: /paths/api/v1/video/list.yaml
-  /api/v1/video/{id}:
-    $ref: /paths/api/v1/video/item.yaml
+  /api/v1/video/{id}:：
+  $ref: /paths/api/v1/video/item.yaml
 schemas:
   $ref#Error: /schemas/common.yaml
   $ref#Video: /schemas/video.yaml

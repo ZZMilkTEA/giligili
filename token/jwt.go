@@ -11,6 +11,7 @@ import (
 const (
 	ErrorReason_ServerBusy = "服务器繁忙"
 	ErrorReason_ReLogin    = "请重新登陆"
+	ErrorReason_TimesOut   = "登陆超时"
 )
 
 var (
@@ -21,7 +22,6 @@ var (
 type JWTClaims struct { // token里面添加用户信息，验证token后可能会用到用户信息
 	jwt.StandardClaims
 	UserID      uint   `json:"user_id"`
-	Password    string `json:"password"`
 	Username    string `json:"username"`
 	Nickname    string `json:"nickname"`
 	Permissions uint   `json:"permissions"`
@@ -51,19 +51,29 @@ func GetToken(claims *JWTClaims) (string, error) {
 }
 
 func VerifyAction(strToken string) (*JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(strToken, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+	var fun = func(token *jwt.Token) (interface{}, error) {
 		return []byte(Secret), nil
-	})
+	}
+
+	token, err := jwt.ParseWithClaims(strToken, &JWTClaims{}, fun)
 	if err != nil {
 		return nil, errors.New(ErrorReason_ServerBusy)
 	}
+
 	claims, ok := token.Claims.(*JWTClaims)
 	if !ok {
 		return nil, errors.New(ErrorReason_ReLogin)
 	}
+
 	if err := token.Claims.Valid(); err != nil {
 		return nil, errors.New(ErrorReason_ReLogin)
 	}
-	fmt.Println("verify")
+	fmt.Println("verify success,token:" + strToken)
 	return claims, nil
+}
+
+func GetLoggedUserId(strToken string) (userId uint, err error) {
+	claim, err := VerifyAction(strToken)
+	return claim.UserID, err
 }
