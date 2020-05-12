@@ -1,4 +1,4 @@
-package service
+package videoService
 
 import (
 	"giligili/model"
@@ -16,7 +16,7 @@ func (service *ListVideoService) ListAll() serializer.Response {
 	videos := []model.Video{}
 	total := 0
 
-	if service.Limit == 0 {
+	if service.Limit <= 0 {
 		service.Limit = 6
 	}
 
@@ -44,11 +44,11 @@ func (service *ListVideoService) ListPassed() serializer.Response {
 	videos := []model.Video{}
 	total := 0
 
-	if service.Limit == 0 {
+	if service.Limit <= 0 {
 		service.Limit = 6
 	}
 
-	if err := model.DB.Model(model.Video{}).Error; err != nil {
+	if err := model.DB.Model(model.Video{}).Where("status = 'passed'").Count(&total).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -56,7 +56,7 @@ func (service *ListVideoService) ListPassed() serializer.Response {
 		}
 	}
 
-	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 1").Find(&videos).Error; err != nil {
+	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 'passed'").Find(&videos).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -72,11 +72,11 @@ func (service *ListVideoService) ListNotPassed() serializer.Response {
 	videos := []model.Video{}
 	total := 0
 
-	if service.Limit == 0 {
+	if service.Limit <= 0 {
 		service.Limit = 6
 	}
 
-	if err := model.DB.Model(model.Video{}).Error; err != nil {
+	if err := model.DB.Model(model.Video{}).Where("status = 'pending_review'").Count(&total).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -84,7 +84,7 @@ func (service *ListVideoService) ListNotPassed() serializer.Response {
 		}
 	}
 
-	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 0").Find(&videos).Error; err != nil {
+	if err := model.DB.Limit(service.Limit).Offset(service.Start).Where("status = 'pending_review'").Find(&videos).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -100,11 +100,11 @@ func (service *ListVideoService) ListByUser(uid string) serializer.Response {
 	videos := []model.Video{}
 	total := 0
 
-	if service.Limit == 0 {
+	if service.Limit <= 0 {
 		service.Limit = 6
 	}
 
-	if err := model.DB.Model(model.Video{}).Error; err != nil {
+	if err := model.DB.Model(model.Video{}).Where("user_id = ?", uid).Count(&total).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",

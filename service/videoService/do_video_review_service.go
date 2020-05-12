@@ -1,22 +1,23 @@
-package service
+package videoService
 
 import (
 	"giligili/model"
 	"giligili/serializer"
 )
 
-type DoReviewService struct {
-	VideoID        uint `form:"video_id" json:"video_id,string" `
-	StatusBackward uint `form:"status_backward" json:"status_backward,string" `
+type DoVideoReviewService struct {
+	VideoID        string `form:"video_id" json:"video_id,string" `
+	StatusBackward string `form:"status_backward" json:"status_backward,string" `
 }
 
-func (service *DoReviewService) ChangeVideoStatus(reviewerID uint) serializer.Response {
+func (service *DoVideoReviewService) ChangeVideoStatus(reviewerID uint) serializer.Response {
 	video, err := model.GetVideoById(service.VideoID)
 	if err != nil {
 		return serializer.Response{
 			Status: 40001,
-			Msg:    "审核的视频不存在",
-			Error:  err.Error(),
+
+			Msg:   "审核的视频不存在",
+			Error: err.Error(),
 		}
 	}
 	if video.Status == service.StatusBackward {
@@ -28,7 +29,7 @@ func (service *DoReviewService) ChangeVideoStatus(reviewerID uint) serializer.Re
 	}
 
 	reviewLog := model.ReviewLog{
-		VideoID:        video.ID,
+		VideoId:        video.ID,
 		ReviewerId:     reviewerID,
 		StatusForward:  video.Status,
 		StatusBackward: service.StatusBackward,

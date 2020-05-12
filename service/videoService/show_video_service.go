@@ -1,4 +1,4 @@
-package service
+package videoService
 
 import (
 	"giligili/model"
@@ -21,11 +21,11 @@ func (service *ShowVideoService) Show(id string) serializer.Response {
 		}
 	}
 
-	if video.Status != 1 {
+	if video.Status != "passed" {
 		return serializer.Response{
 			Status: 403,
 			Msg:    "视频未审核通过",
-			Error:  err.Error(),
+			Error:  "video error",
 		}
 	}
 	//处理视频被观看的一系列问题

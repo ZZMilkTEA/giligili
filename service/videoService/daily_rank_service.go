@@ -1,4 +1,4 @@
-package service
+package videoService
 
 import (
 	"fmt"

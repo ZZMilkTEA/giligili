@@ -1,4 +1,4 @@
-package service
+package videoService
 
 import (
 	"giligili/model"
@@ -11,7 +11,7 @@ type CreateVideoService struct {
 	Info   string `form:"info" json:"info" binding:"max=3000"`
 	URL    string `form:"url" json:"url"`
 	Avatar string `form:"avatar" json:"avatar"`
-	Type   uint   `form:"type" json:"type"`
+	Type   string `form:"type" json:"type"`
 	UserId uint   `form:"user_id" json:"user_id"`
 }
 
@@ -23,7 +23,7 @@ func (service *CreateVideoService) Create(user *model.User) serializer.Response 
 		URL:    service.URL,
 		Avatar: service.Avatar,
 		Type:   service.Type,
-		UserID: user.ID,
+		UserId: user.ID,
 	}
 
 	err := model.DB.Create(&video).Error

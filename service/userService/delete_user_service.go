@@ -1,4 +1,4 @@
-package service
+package userService
 
 import (
 	"giligili/model"
@@ -9,7 +9,7 @@ import (
 type DeleteUserService struct {
 }
 
-// Delete 删除视频
+// Delete 注销用户
 func (service *DeleteUserService) Delete(id string) serializer.Response {
 	var user model.User
 	err := model.DB.First(&user, id).Error
