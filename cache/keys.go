@@ -16,3 +16,6 @@ const (
 func VideoViewKey(id uint) string {
 	return fmt.Sprintf("view:video:%s", strconv.Itoa(int(id)))
 }
+func AudioViewKey(id uint) string {
+	return fmt.Sprintf("view:audio:%s", strconv.Itoa(int(id)))
+}

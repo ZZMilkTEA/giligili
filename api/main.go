@@ -27,7 +27,7 @@ func CurrentUser(c *gin.Context) *model.User {
 	if err != nil {
 		return nil
 	}
-	if user, _ := model.GetUser(claim.UserID); &user != nil {
+	if user, _ := model.GetUser(claim.UserId); &user != nil {
 		return &user
 	}
 	return nil

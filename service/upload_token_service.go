@@ -56,7 +56,7 @@ func (service *UploadTokenService) Post() serializer.Response {
 	}
 
 	// 签名直传。
-	signedPutURL, err := bucket.SignURL(key, oss.HTTPPut, 600, options...)
+	signedPutURL, err := bucket.SignURL(key, oss.HTTPPut, 60, options...)
 	if err != nil {
 		return serializer.Response{
 			Status: 50002,
@@ -65,7 +65,7 @@ func (service *UploadTokenService) Post() serializer.Response {
 		}
 	}
 	// 查看资源
-	signedGetURL, err := bucket.SignURL(key, oss.HTTPGet, 600)
+	signedGetURL, err := bucket.SignURL(key, oss.HTTPGet, 60)
 	if err != nil {
 		return serializer.Response{
 			Status: 50002,

@@ -10,10 +10,10 @@ import (
 // User 用户模型
 type User struct {
 	gorm.Model
-	UserName       string
+	UserName       string `gorm:"size:30"`
 	PasswordDigest string
-	Nickname       string
-	Status         string
+	Nickname       string `gorm:"size:30"`
+	Status         string `gorm:"type:enum('active','inactive','suspend')"`
 	Avatar         string `gorm:"size:1000"`
 	Permission     uint
 }

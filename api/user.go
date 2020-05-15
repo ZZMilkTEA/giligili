@@ -2,13 +2,13 @@ package api
 
 import (
 	"giligili/serializer"
-	"giligili/service"
+	"giligili/service/userService"
 	"github.com/gin-gonic/gin"
 )
 
 // UserRegister 用户注册接口
 func UserRegister(c *gin.Context) {
-	var service service.UserRegisterService
+	var service userService.UserRegisterService
 	if err := c.ShouldBind(&service); err == nil {
 		if user, err := service.Register(); err != nil {
 			c.JSON(200, err)
@@ -23,14 +23,14 @@ func UserRegister(c *gin.Context) {
 
 // GetUser 用户详情
 func GetUser(c *gin.Context) {
-	service := service.ShowUserService{}
+	service := userService.ShowUserService{}
 	user := service.Show(c.Param("id"))
 	c.JSON(200, user)
 }
 
 // ListUser 所有用户详情
 func ListUser(c *gin.Context) {
-	service := service.ListUserService{}
+	service := userService.ListUserService{}
 	if err := c.ShouldBind(&service); err == nil {
 		res := service.List()
 		c.JSON(200, res)
@@ -41,7 +41,7 @@ func ListUser(c *gin.Context) {
 
 // ChangeUserPermission 改变用户权限
 func ChangeUserPermission(c *gin.Context) {
-	service := service.ChangeUserPermissionService{}
+	service := userService.ChangeUserPermissionService{}
 	if err := c.ShouldBind(&service); err == nil {
 		res := service.ChangeUserPermission()
 		c.JSON(200, res)
@@ -52,7 +52,7 @@ func ChangeUserPermission(c *gin.Context) {
 
 // DeleteUser 注销用户
 func DeleteUser(c *gin.Context) {
-	service := service.DeleteUserService{}
+	service := userService.DeleteUserService{}
 	user := service.Delete(c.Param("id"))
 	c.JSON(200, user)
 }

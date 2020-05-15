@@ -2,7 +2,7 @@ package api
 
 import (
 	"giligili/serializer"
-	"giligili/service"
+	"giligili/service/userService"
 	"giligili/token"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -21,7 +21,7 @@ func SayHello(c *gin.Context) {
 }
 
 func UserLogin(c *gin.Context) {
-	service := service.UserLoginService{}
+	service := userService.UserLoginService{}
 	if err := c.ShouldBind(&service); err == nil {
 		if user, err := service.Login(); err == nil {
 			signedToken, err := token.CreateUserToken(user)

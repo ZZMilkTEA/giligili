@@ -7,23 +7,25 @@ import (
 
 // CreateVideoService 视频投稿的服务
 type CreateVideoService struct {
-	Title  string `form:"title" json:"title" binding:"required,min=2,max=100"`
-	Info   string `form:"info" json:"info" binding:"max=3000"`
-	URL    string `form:"url" json:"url"`
-	Avatar string `form:"avatar" json:"avatar"`
-	Type   string `form:"type" json:"type"`
-	UserId uint   `form:"user_id" json:"user_id"`
+	Title       string `form:"title" json:"title" binding:"required,min=2,max=100"`
+	Info        string `form:"info" json:"info" binding:"max=3000"`
+	URL         string `form:"url" json:"url"`
+	Avatar      string `form:"avatar" json:"avatar"`
+	Type        string `form:"type" json:"type"`
+	UserId      uint   `form:"user_id" json:"user_id"`
+	FromOutside bool   `form:"from_outside" json:"from_outside"`
 }
 
 // Create 创建视频
 func (service *CreateVideoService) Create(user *model.User) serializer.Response {
 	video := model.Video{
-		Title:  service.Title,
-		Info:   service.Info,
-		URL:    service.URL,
-		Avatar: service.Avatar,
-		Type:   service.Type,
-		UserId: user.ID,
+		Title:       service.Title,
+		Info:        service.Info,
+		URL:         service.URL,
+		Avatar:      service.Avatar,
+		Type:        service.Type,
+		FromOutside: service.FromOutside,
+		UserId:      user.ID,
 	}
 
 	err := model.DB.Create(&video).Error

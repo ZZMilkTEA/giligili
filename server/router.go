@@ -19,6 +19,19 @@ func NewRouter() *gin.Engine {
 	// 路由
 	v1 := r.Group("/api/v1")
 	{
+		//---------------------游客可使用的接口-----------------------
+		v1.GET("videos/:id", api.ShowVideo)
+		v1.GET("videos", api.ListAllVideo)
+		v1.GET("not-passed-videos", api.ListNotPassedVideos)
+		v1.GET("passed-videos", api.ListPassedVideos)
+		v1.GET("user/:id/videos", api.ListVideoByUser)
+		v1.GET("user/:id/comments", api.ListCommentByUser)
+		v1.GET("video/:id/comments", api.ListCommentsByVideoId)
+		// 排行榜
+		v1.GET("rank/daily", api.DailyRank)
+		v1.GET("search", api.Search)
+		// 其他
+		//-------------------用户相关接口------------------------
 		v1.POST("ping", api.Ping)
 
 		// 用户注册
@@ -27,8 +40,11 @@ func NewRouter() *gin.Engine {
 		// 用户登录
 		v1.POST("login", api.UserLogin)
 
+		//验证token，返回用户信息
 		v1.GET("verify", api.Verify)
+		//刷新token时间
 		v1.GET("refresh", api.Refresh)
+		//测试token
 		v1.GET("sayHello", api.SayHello)
 
 		// 用户登出
@@ -39,36 +55,26 @@ func NewRouter() *gin.Engine {
 		v1.GET("users", api.ListUser)
 
 		// 需要登录保护的
-		authedUser := v1.Group("/")
-		authedUser.Use(middleware.AuthUserRequired())
+		authUser := v1.Group("/")
+		authUser.Use(middleware.AuthUserRequired())
 		{
-			// User Routing
-			authedUser.DELETE("user/:id/logout", api.UserLogout)
-			// 视频操作
-			authedUser.POST("videos", api.CreateVideo)
-			authedUser.PUT("videos/:id", api.UpdateVideo)
-			authedUser.DELETE("videos/:id", api.DeleteVideo)
+			//authUser.DELETE("user/:id/logout", api.UserLogout)
+			authUser.POST("upload/token", api.UploadToken)
+			authUser.POST("videos", api.CreateVideo)
+			authUser.PUT("videos/:id", api.UpdateVideo)
+			authUser.DELETE("videos/:id", api.DeleteVideo)
+			authUser.POST("video/:id/comments", api.PostComment)
 		}
 		// 需要验证审查员身份的
 		authAdmin := v1.Group("/")
 		authAdmin.Use(middleware.AuthInspectorRequired())
 		{
 			//先不忙测审查员鉴权
-			v1.PUT("user/change-permission", api.ChangeUserPermission)
-			v1.DELETE("user/:id", api.DeleteUser)
-			v1.PUT("review", api.DoReview)
-			v1.GET("review/:id", api.GetVideo)
+			authUser.PUT("user/change-permission", api.ChangeUserPermission)
+			authUser.DELETE("user/:id", api.DeleteUser)
+			authUser.PUT("review/:id", api.DoReview)
+			authUser.GET("review/:id", api.GetVideo)
 		}
-
-		v1.GET("videos/:id", api.ShowVideo)
-		v1.GET("videos", api.ListAllVideo)
-		v1.GET("not-passed-videos", api.ListNotPassedVideo)
-		v1.GET("passed-videos", api.ListPassedVideo)
-		v1.GET("user/:id/videos", api.ListVideoByUser)
-		// 排行榜
-		v1.GET("rank/daily", api.DailyRank)
-		// 其他
-		v1.POST("upload/token", api.UploadToken)
 	}
 
 	// swagger文档

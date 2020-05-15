@@ -44,7 +44,7 @@ func LoggerToFile() gin.HandlerFunc {
 		rotatelogs.WithLinkName(fileName),
 
 		// 设置最大保存时间(7天)
-		rotatelogs.WithMaxAge(7*24*time.Hour),
+		rotatelogs.WithMaxAge(60*24*time.Hour),
 
 		// 设置日志切割时间间隔(1天)
 		rotatelogs.WithRotationTime(24*time.Hour),

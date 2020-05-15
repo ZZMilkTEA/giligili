@@ -1,14 +1,14 @@
 package api
 
 import (
-	"giligili/service"
+	"giligili/service/videoService"
 
 	"github.com/gin-gonic/gin"
 )
 
 // DailyRank 每日排行
 func DailyRank(c *gin.Context) {
-	service := service.DailyRankService{}
+	service := videoService.DailyRankService{}
 	if err := c.ShouldBind(&service); err == nil {
 		res := service.Get()
 		c.JSON(200, res)

@@ -9,8 +9,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Video 视频模型
-type Video struct {
+// Audio 视频模型
+type Audio struct {
 	gorm.Model
 	Title       string
 	Info        string
@@ -23,17 +23,17 @@ type Video struct {
 }
 
 //	通过ID获取视频
-func GetVideoById(Id interface{}) (Video, error) {
-	var video Video
-	result := DB.First(&video, Id)
-	return video, result.Error
+func GetAudioById(Id interface{}) (Audio, error) {
+	var Audio Audio
+	result := DB.First(&Audio, Id)
+	return Audio, result.Error
 }
 
 //	创建审核日志事务
-func ChangeVideoStatusBusiness(video Video, reviewLog ReviewLog) error {
+func ChangeAudioStatusBusiness(Audio Audio, reviewLog ReviewLog) error {
 	tx := DB.Begin()
 
-	if err := tx.Model(&video).Update("status", reviewLog.StatusBackward).Error; err != nil {
+	if err := tx.Model(&Audio).Update("status", reviewLog.StatusBackward).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -47,35 +47,35 @@ func ChangeVideoStatusBusiness(video Video, reviewLog ReviewLog) error {
 }
 
 // AvatarURL 封面地址
-func (video *Video) AvatarURL() string {
-	if video.Avatar == "" {
+func (Audio *Audio) AvatarURL() string {
+	if Audio.Avatar == "" {
 		return ""
 	}
 	client, _ := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	bucket, _ := client.Bucket(os.Getenv("OSS_BUCKET"))
-	signedGetURL, _ := bucket.SignURL(video.Avatar, oss.HTTPGet, 600)
+	signedGetURL, _ := bucket.SignURL(Audio.Avatar, oss.HTTPGet, 600)
 	return signedGetURL
 }
 
-// VideoURL 视频地址
-func (video *Video) VideoURL() string {
+// AudioURL 视频地址
+func (Audio *Audio) AudioURL() string {
 	client, _ := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	bucket, _ := client.Bucket(os.Getenv("OSS_BUCKET"))
-	signedGetURL, _ := bucket.SignURL(video.URL, oss.HTTPGet, 600)
+	signedGetURL, _ := bucket.SignURL(Audio.URL, oss.HTTPGet, 600)
 	return signedGetURL
 }
 
 // View 点击数
-func (video *Video) View() uint64 {
-	countStr, _ := cache.RedisClient.Get(cache.VideoViewKey(video.ID)).Result()
+func (Audio *Audio) View() uint64 {
+	countStr, _ := cache.RedisClient.Get(cache.AudioViewKey(Audio.ID)).Result()
 	count, _ := strconv.ParseUint(countStr, 10, 64)
 	return count
 }
 
 // AddView 视频游览
-func (video *Video) AddView() {
+func (Audio *Audio) AddView() {
 	// 增加视频点击数
-	cache.RedisClient.Incr(cache.VideoViewKey(video.ID))
+	cache.RedisClient.Incr(cache.AudioViewKey(Audio.ID))
 	// 增加排行点击数
-	cache.RedisClient.ZIncrBy(cache.DailyRankKey, 1, strconv.Itoa(int(video.ID)))
+	cache.RedisClient.ZIncrBy(cache.DailyRankKey, 1, strconv.Itoa(int(Audio.ID)))
 }

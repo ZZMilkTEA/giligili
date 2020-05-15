@@ -18,7 +18,7 @@ func CurrentUser() gin.HandlerFunc {
 			if err != nil {
 				c.Next()
 			} else {
-				uid := claim.UserID
+				uid := claim.UserId
 				user, err := model.GetUser(uid)
 				if err == nil {
 					c.Set("user", &user)

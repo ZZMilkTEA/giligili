@@ -6,10 +6,10 @@ import (
 )
 
 type ListCommentService struct {
-	Limit     int    `form:"limit"`
-	Start     int    `form:"start"`
-	MediaType string `form:"type" json:"type"`
-	MediaId   uint   `form:"mediaId" json:"media_id"`
+	Limit int `form:"limit"`
+	Start int `form:"start"`
+	//MediaType string `form:"type" json:"type"`
+	//MediaId   uint   `form:"mediaId" json:"media_id"`
 }
 
 //ListAll 列出所有评论
@@ -40,16 +40,18 @@ func (service *ListCommentService) ListAll() serializer.Response {
 	return serializer.BuildListResponse(serializer.BuildComments(comments), uint(total))
 }
 
-//ListByMedia 通过媒体列出评论
-func (service *ListCommentService) ListByMedia() serializer.Response {
+//ListByMediaId 通过媒体列出评论
+func (service *ListCommentService) ListByVideoId(videoId string) serializer.Response {
 	comments := []model.Comment{}
 	total := 0
 
-	if service.Limit == 0 {
+	if service.Limit <= 0 {
 		service.Limit = 20
 	}
 
-	if err := model.DB.Model(model.Comment{}).Count(&total).Error; err != nil {
+	if err := model.DB.Model(model.Comment{}).
+		Where("media_type = ? AND media_id = ?", "video", videoId).
+		Count(&total).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -57,8 +59,9 @@ func (service *ListCommentService) ListByMedia() serializer.Response {
 		}
 	}
 
-	if err := model.DB.Limit(service.Limit).Offset(service.Start).Find(&comments).
-		Where(&model.Comment{MediaType: service.MediaType, MediaId: service.MediaId}).Error; err != nil {
+	if err := model.DB.Limit(service.Limit).Offset(service.Start).
+		Where("media_type = ? AND media_id = ?", "video", videoId).
+		Find(&comments).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
 			Msg:    "数据库连接错误",
@@ -69,7 +72,7 @@ func (service *ListCommentService) ListByMedia() serializer.Response {
 	return serializer.BuildListResponse(serializer.BuildComments(comments), uint(total))
 }
 
-//ListByMedia 通过用户列出评论
+//ListByMediaId 通过用户列出评论
 func (service *ListCommentService) ListByUser(uid string) serializer.Response {
 	comments := []model.Comment{}
 	total := 0

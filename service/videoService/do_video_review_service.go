@@ -6,12 +6,12 @@ import (
 )
 
 type DoVideoReviewService struct {
-	VideoID        string `form:"video_id" json:"video_id,string" `
-	StatusBackward string `form:"status_backward" json:"status_backward,string" `
+	StatusBackward string `form:"status_backward" json:"status_backward" `
+	Remark         string `form:"remark" json:"remark" binding:"max=40"`
 }
 
-func (service *DoVideoReviewService) ChangeVideoStatus(reviewerID uint) serializer.Response {
-	video, err := model.GetVideoById(service.VideoID)
+func (service *DoVideoReviewService) ChangeVideoStatus(reviewerId uint, videoId string) serializer.Response {
+	video, err := model.GetVideoById(videoId)
 	if err != nil {
 		return serializer.Response{
 			Status: 40001,
@@ -30,9 +30,10 @@ func (service *DoVideoReviewService) ChangeVideoStatus(reviewerID uint) serializ
 
 	reviewLog := model.ReviewLog{
 		VideoId:        video.ID,
-		ReviewerId:     reviewerID,
+		ReviewerId:     reviewerId,
 		StatusForward:  video.Status,
 		StatusBackward: service.StatusBackward,
+		Remark:         service.Remark,
 	}
 
 	if err := model.ChangeVideoStatusBusiness(video, reviewLog); err != nil {
@@ -41,6 +42,7 @@ func (service *DoVideoReviewService) ChangeVideoStatus(reviewerID uint) serializ
 			Msg:    "视频状态更改失败",
 			Error:  err.Error(),
 		}
+
 	} else {
 		return serializer.Response{
 			Data: serializer.BuildReviewLog(reviewLog),
