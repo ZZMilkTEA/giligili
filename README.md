@@ -1,17 +1,21 @@
-# 我自己项目所上传的站点位置：http://r3mix4lles.cn:9999/
+# 我自己项目所上传的站点位置：http://r3mix4lles.cn:9999/ (暂时不开放)
 本站是从@chengka 大佬的[Singo](https://github.com/bydmm/singo)框架的学习项目所fork下来进行修改的。
 这个项目为自己的毕设所开发，是系统的后端部分。
 ## 目前相对原项目所做的修改
 + 用户验证方式从session改为了token，使用的是[jwt-go](https://github.com/dgrijalva/jwt-go)。降低服务器负担，更加适应REST API的设计风格
-+ 使用[file-rotatelogs](https://github.com/lestrrat-go/file-rotatelogs)来进行系统日志记录，设置为输出到文件
++ 使用[file-rotatelogs](https://github.com/lestrrat-go/file-rotatelogs)来进行接口请求、响应记录，设置为输出到文件
 + 对用户增添了权限等级
 + 添加审核视频以及其它管理员后台相关的服务内容
 + 为视频添加了
     + 审核状态
     + 分区
++ 添加音频媒体
 + 新建审核日志模型，用来记录审核情况
++ 添加了评论功能
++ 添加了个人信息页
 + 上传接口可以根据上传文件的类型来确定上传到OSS的位置
-
++ 为视频审核调用生成雪碧图的接口
++ 为跨域设置了环境变量CORS
 ### 下面是原项目的说明内容
 ***
 

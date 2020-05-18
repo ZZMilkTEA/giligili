@@ -9,20 +9,20 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Audio 视频模型
+// Audio 音频模型
 type Audio struct {
 	gorm.Model
 	Title       string
 	Info        string
 	URL         string
 	Avatar      string
-	Type        string `gorm:"type:enum('education','food','technology')"`
+	Kind        string `gorm:"type:enum('education','food','technology')"`
 	UserId      uint
 	Status      string `gorm:"type:enum('pending_review','passed','not_passed'); default:'pending_review'"`
 	FromOutside bool   `gorm:"default:'false'"`
 }
 
-//	通过ID获取视频
+//	通过ID获取音频
 func GetAudioById(Id interface{}) (Audio, error) {
 	var Audio Audio
 	result := DB.First(&Audio, Id)
@@ -57,7 +57,7 @@ func (Audio *Audio) AvatarURL() string {
 	return signedGetURL
 }
 
-// AudioURL 视频地址
+// AudioURL 音频地址
 func (Audio *Audio) AudioURL() string {
 	client, _ := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	bucket, _ := client.Bucket(os.Getenv("OSS_BUCKET"))
@@ -72,9 +72,9 @@ func (Audio *Audio) View() uint64 {
 	return count
 }
 
-// AddView 视频游览
+// AddView 音频游览
 func (Audio *Audio) AddView() {
-	// 增加视频点击数
+	// 增加音频点击数
 	cache.RedisClient.Incr(cache.AudioViewKey(Audio.ID))
 	// 增加排行点击数
 	cache.RedisClient.ZIncrBy(cache.DailyRankKey, 1, strconv.Itoa(int(Audio.ID)))

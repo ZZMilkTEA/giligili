@@ -2,8 +2,8 @@ package serializer
 
 import "giligili/model"
 
-// Video 视频序列化器
-type Video struct {
+// audio 音频序列化器
+type audio struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
 	Info        string `json:"info"`
@@ -17,18 +17,18 @@ type Video struct {
 	FromOutside bool   `json:"from_outside"`
 }
 
-// BuildVideo 序列化视频
-func BuildVideo(item model.Video) Video {
+// BuildAudio 序列化音频
+func BuildAudio(item model.Audio) audio {
 	user, _ := model.GetUser(item.UserId)
-	videoURL := item.URL
+	audioURL := item.URL
 	if !item.FromOutside {
-		videoURL = item.VideoURL()
+		audioURL = item.AudioURL()
 	}
-	return Video{
+	return audio{
 		ID:          item.ID,
 		Title:       item.Title,
 		Info:        item.Info,
-		URL:         videoURL,
+		URL:         audioURL,
 		Avatar:      item.AvatarURL(),
 		View:        item.View(),
 		User:        BuildUser(user),
@@ -39,11 +39,11 @@ func BuildVideo(item model.Video) Video {
 	}
 }
 
-// BuildVideos 序列化视频列表
-func BuildVideos(items []model.Video) (videos []Video) {
+// BuildAudios 序列化音频列表
+func BuildAudios(items []model.Audio) (audios []audio) {
 	for _, item := range items {
-		video := BuildVideo(item)
-		videos = append(videos, video)
+		audio := BuildAudio(item)
+		audios = append(audios, audio)
 	}
-	return videos
+	return audios
 }

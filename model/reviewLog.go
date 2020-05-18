@@ -6,7 +6,8 @@ import (
 
 type ReviewLog struct {
 	gorm.Model
-	VideoId        uint   `gorm:"not null"`
+	MediaId        uint   `gorm:"not null"`
+	MediaType      string `gorm:"type:enum('video','audio');not null"`
 	ReviewerId     uint   `gorm:"not null"`
 	StatusForward  string `gorm:"type:enum('pending_review','passed','not_passed'); default:'pending_review'"`
 	StatusBackward string `gorm:"type:enum('pending_review','passed','not_passed'); default:'pending_review'"`

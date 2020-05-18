@@ -1,12 +1,12 @@
-package videoService
+package audioService
 
 import (
 	"giligili/model"
 	"giligili/serializer"
 )
 
-// CreateVideoService 视频投稿的服务
-type CreateVideoService struct {
+// CreateAudioService 音频投稿的服务
+type CreateAudioService struct {
 	Title       string `form:"title" json:"title" binding:"required,min=2,max=100"`
 	Info        string `form:"info" json:"info" binding:"max=3000"`
 	URL         string `form:"url" json:"url"`
@@ -16,9 +16,9 @@ type CreateVideoService struct {
 	FromOutside bool   `form:"from_outside" json:"from_outside"`
 }
 
-// Create 创建视频
-func (service *CreateVideoService) Create(user *model.User) serializer.Response {
-	video := model.Video{
+// Create 创建音频
+func (service *CreateAudioService) Create(user *model.User) serializer.Response {
+	audio := model.Audio{
 		Title:       service.Title,
 		Info:        service.Info,
 		URL:         service.URL,
@@ -28,16 +28,16 @@ func (service *CreateVideoService) Create(user *model.User) serializer.Response 
 		UserId:      user.ID,
 	}
 
-	err := model.DB.Create(&video).Error
+	err := model.DB.Create(&audio).Error
 	if err != nil {
 		return serializer.Response{
 			Status: 50001,
-			Msg:    "视频保存失败",
+			Msg:    "音频保存失败",
 			Error:  err.Error(),
 		}
 	}
 
 	return serializer.Response{
-		Data: serializer.BuildVideo(video),
+		Data: serializer.BuildAudio(audio),
 	}
 }

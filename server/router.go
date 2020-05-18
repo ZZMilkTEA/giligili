@@ -21,12 +21,17 @@ func NewRouter() *gin.Engine {
 	{
 		//---------------------游客可使用的接口-----------------------
 		v1.GET("videos/:id", api.ShowVideo)
-		v1.GET("videos", api.ListAllVideo)
-		v1.GET("not-passed-videos", api.ListNotPassedVideos)
+		v1.GET("videos/:id/comments", api.ListCommentsByMediaId)
+
 		v1.GET("passed-videos", api.ListPassedVideos)
-		v1.GET("user/:id/videos", api.ListVideoByUser)
+		v1.GET("user/:id/passed-videos", api.ListPassedVideoByUser)
+		v1.GET("user/:id/passed-audios", api.ListPassedAudioByUser)
 		v1.GET("user/:id/comments", api.ListCommentByUser)
-		v1.GET("video/:id/comments", api.ListCommentsByVideoId)
+
+		v1.GET("audios/:id", api.ShowAudio)
+		v1.GET("audios/:id/comments", api.ListCommentsByMediaId)
+		v1.GET("passed-audios", api.ListPassedAudios)
+
 		// 排行榜
 		v1.GET("rank/daily", api.DailyRank)
 		v1.GET("search", api.Search)
@@ -52,28 +57,46 @@ func NewRouter() *gin.Engine {
 
 		//获取用户信息
 		v1.GET("user/:id", api.GetUser)
-		v1.GET("users", api.ListUser)
 
 		// 需要登录保护的
 		authUser := v1.Group("/")
 		authUser.Use(middleware.AuthUserRequired())
 		{
 			//authUser.DELETE("user/:id/logout", api.UserLogout)
-			authUser.POST("upload/token", api.UploadToken)
+			authUser.POST("upload/token", api.MediaUploadToken)
 			authUser.POST("videos", api.CreateVideo)
 			authUser.PUT("videos/:id", api.UpdateVideo)
-			authUser.DELETE("videos/:id", api.DeleteVideo)
-			authUser.POST("video/:id/comments", api.PostComment)
+			authUser.DELETE("videos/:id", api.DeleteMyVideo)
+			authUser.POST("videos/:id/comments", api.PostComment)
+
+			authUser.POST("audios", api.CreateAudio)
+			authUser.PUT("audios/:id", api.UpdateAudio)
+			authUser.DELETE("audios/:id", api.DeleteAudio)
+			authUser.POST("audios/:id/comments", api.PostComment)
+
+			authUser.PUT("user/:id/avatar", api.ChangeUserAvatar)
 		}
 		// 需要验证审查员身份的
-		authAdmin := v1.Group("/")
-		authAdmin.Use(middleware.AuthInspectorRequired())
+		authInsp := v1.Group("/")
+		authInsp.Use(middleware.AuthInspectorRequired())
 		{
-			//先不忙测审查员鉴权
-			authUser.PUT("user/change-permission", api.ChangeUserPermission)
-			authUser.DELETE("user/:id", api.DeleteUser)
-			authUser.PUT("review/:id", api.DoReview)
-			authUser.GET("review/:id", api.GetVideo)
+			authInsp.GET("not-passed-videos", api.ListNotPassedVideos)
+			authInsp.GET("not-passed-audios", api.ListNotPassedAudios)
+			authInsp.PUT("review/videos/:id", api.DoVideoReview)
+			authInsp.PUT("review/audios/:id", api.DoAudioReview)
+			authInsp.GET("review/videos/:id", api.GetVideo)
+			authInsp.GET("review/audios/:id", api.GetAudio)
+			authInsp.GET("videos/:id/sprite", api.GetVideoSpritePic)
+			authInsp.GET("videos", api.ListAllVideo)
+			authInsp.GET("audios", api.ListAllAudio)
+		}
+		// 需要验证管理员身份的
+		authAdmin := v1.Group("/")
+		authAdmin.Use(middleware.AuthAdminRequired())
+		{
+			authAdmin.PUT("user/:id", api.ChangeUserInfo)
+			authAdmin.DELETE("user/:id", api.DeleteUser)
+			authAdmin.GET("users", api.ListUser)
 		}
 	}
 

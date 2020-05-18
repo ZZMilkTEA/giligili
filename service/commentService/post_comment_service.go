@@ -7,7 +7,8 @@ import (
 
 // PostCommentService 发表评论的服务
 type PostCommentService struct {
-	Content string `form:"content" json:"content" binding:"max=3000"`
+	Content string `form:"content" json:"content" binding:"max=3000,required"`
+	Type    string `form:"type" json:"type" binding:"required"`
 	//FromUserId    string `form:"from_user_id" json:"from_user_id"`
 }
 
@@ -15,7 +16,7 @@ type PostCommentService struct {
 func (service *PostCommentService) CreateCommentToVideo(user *model.User, videoId uint) serializer.Response {
 	comment := model.Comment{
 		MediaId:    videoId,
-		MediaType:  "video",
+		MediaType:  service.Type,
 		Content:    service.Content,
 		FromUserId: user.ID,
 	}

@@ -21,18 +21,20 @@ var (
 
 type JWTClaims struct { // token里面添加用户信息，验证token后可能会用到用户信息
 	jwt.StandardClaims
-	UserId      uint   `json:"user_id"`
-	Username    string `json:"username"`
-	Nickname    string `json:"nickname"`
-	Permissions uint   `json:"permissions"`
+	UserId     uint   `json:"user_id"`
+	Username   string `json:"username"`
+	Nickname   string `json:"nickname"`
+	Avatar     string `json:"avatar"`
+	Permission uint   `json:"permission"`
 }
 
 func CreateUserToken(user model.User) (tokenString string, err error) {
 	claims := &JWTClaims{
-		UserId:      user.ID,
-		Username:    user.UserName,
-		Nickname:    user.Nickname,
-		Permissions: user.Permission,
+		UserId:     user.ID,
+		Username:   user.UserName,
+		Nickname:   user.Nickname,
+		Avatar:     user.AvatarURL(),
+		Permission: user.Permission,
 	}
 	claims.IssuedAt = time.Now().Unix()
 	claims.ExpiresAt = time.Now().Add(time.Second * time.Duration(ExpireTime)).Unix()

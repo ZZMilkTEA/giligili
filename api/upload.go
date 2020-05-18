@@ -1,16 +1,16 @@
 package api
 
 import (
-	"giligili/service"
+	"giligili/service/ossService"
 
 	"github.com/gin-gonic/gin"
 )
 
-// UploadToken 上传授权
-func UploadToken(c *gin.Context) {
-	service := service.UploadTokenService{}
+// MediaUploadToken 上传授权
+func MediaUploadToken(c *gin.Context) {
+	service := ossService.UploadTokenService{}
 	if err := c.ShouldBind(&service); err == nil {
-		res := service.Post()
+		res := service.PostVideo()
 		c.JSON(200, res)
 	} else {
 		c.JSON(200, ErrorResponse(err))

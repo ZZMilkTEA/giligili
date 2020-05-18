@@ -1,9 +1,11 @@
 package api
 
 import (
+	"giligili/model"
 	"giligili/serializer"
 	"giligili/service/userService"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // UserRegister 用户注册接口
@@ -39,11 +41,54 @@ func ListUser(c *gin.Context) {
 	}
 }
 
-// ChangeUserPermission 改变用户权限
+// ChangeUserPermission 改变用户权限 (未来将删除
 func ChangeUserPermission(c *gin.Context) {
 	service := userService.ChangeUserPermissionService{}
 	if err := c.ShouldBind(&service); err == nil {
 		res := service.ChangeUserPermission()
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, ErrorResponse(err))
+	}
+}
+
+// ChangeUserInfo 改变用户信息
+func ChangeUserInfo(c *gin.Context) {
+	userIdStr := c.Param("id")
+	temp, _ := strconv.ParseUint(userIdStr, 10, 32)
+	userId := uint(temp)
+
+	service := userService.ChangeUserInfoService{}
+	if err := c.ShouldBind(&service); err == nil {
+		res := service.ChangeUserInfo(userId)
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, ErrorResponse(err))
+	}
+}
+
+// ChangeUserAvatar 改变用户头像
+func ChangeUserAvatar(c *gin.Context) {
+	userIdStr := c.Param("id")
+	temp, _ := strconv.ParseUint(userIdStr, 10, 32)
+	userId := uint(temp)
+
+	userStr, _ := c.Get("user")
+	user, _ := userStr.(*model.User)
+
+	if user.ID != userId {
+		errResponse := serializer.Response{
+			Status: 40003,
+			Data:   nil,
+			Msg:    "只能修改自己的头像",
+			Error:  "verify err",
+		}
+		c.JSON(200, errResponse)
+	}
+
+	service := userService.ChangeUserInfoService{}
+	if err := c.ShouldBind(&service); err == nil {
+		res := service.ChangeUserAvatar(user.ID)
 		c.JSON(200, res)
 	} else {
 		c.JSON(200, ErrorResponse(err))

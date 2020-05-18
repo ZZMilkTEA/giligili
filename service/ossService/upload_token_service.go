@@ -1,4 +1,4 @@
-package service
+package ossService
 
 import (
 	"giligili/serializer"
@@ -15,8 +15,8 @@ type UploadTokenService struct {
 	Filename string `form:"filename" json:"filename"`
 }
 
-// Post 创建token
-func (service *UploadTokenService) Post() serializer.Response {
+// Post 创建Video token
+func (service *UploadTokenService) PostVideo() serializer.Response {
 	client, err := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	if err != nil {
 		return serializer.Response{
@@ -53,6 +53,8 @@ func (service *UploadTokenService) Post() serializer.Response {
 		key = "upload/avatar/" + uuid.Must(uuid.NewRandom()).String() + ext
 	case ".mp4":
 		key = "upload/videos/" + uuid.Must(uuid.NewRandom()).String() + ext
+	case ".mp3":
+		key = "upload/audios/" + uuid.Must(uuid.NewRandom()).String() + ext
 	}
 
 	// 签名直传。

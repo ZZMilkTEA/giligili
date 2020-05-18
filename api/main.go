@@ -4,10 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"giligili/conf"
-	"giligili/model"
 	"giligili/serializer"
-	"giligili/token"
-
 	"github.com/gin-gonic/gin"
 	validator "gopkg.in/go-playground/validator.v8"
 )
@@ -18,19 +15,6 @@ func Ping(c *gin.Context) {
 		Status: 0,
 		Msg:    "Pong",
 	})
-}
-
-// CurrentUser 获取当前用户
-func CurrentUser(c *gin.Context) *model.User {
-	strToken := c.Request.Header.Get("token")
-	claim, err := token.VerifyAction(strToken)
-	if err != nil {
-		return nil
-	}
-	if user, _ := model.GetUser(claim.UserId); &user != nil {
-		return &user
-	}
-	return nil
 }
 
 // ErrorResponse 返回错误消息

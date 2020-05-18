@@ -29,7 +29,7 @@ func UserLogin(c *gin.Context) {
 				c.JSON(200, ErrorResponse(err))
 				return
 			}
-			res := serializer.BuildTokenResponse(signedToken)
+			res := serializer.BuildLoginResponse(signedToken)
 			c.JSON(200, res)
 		} else {
 			c.JSON(200, err)

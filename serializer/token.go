@@ -4,9 +4,10 @@ import (
 	"giligili/token"
 )
 
-type TokenResponse struct {
+type LoginResponse struct {
 	Response
-	Data string `json:"data"`
+	Data string           `json:"data"`
+	User *token.JWTClaims `json:"user"`
 }
 
 type ClaimResponse struct {
@@ -14,9 +15,11 @@ type ClaimResponse struct {
 	Data token.JWTClaims `json:"data"`
 }
 
-func BuildTokenResponse(token string) TokenResponse {
-	return TokenResponse{
-		Data: token,
+func BuildLoginResponse(tokenStr string) LoginResponse {
+	claims, _ := token.VerifyAction(tokenStr)
+	return LoginResponse{
+		Data: tokenStr,
+		User: claims,
 	}
 }
 

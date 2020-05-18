@@ -38,6 +38,9 @@ func GetUser(ID interface{}) (User, error) {
 
 // AvatarURL 头像地址
 func (user *User) AvatarURL() string {
+	if user.Avatar == "" {
+		return ""
+	}
 	client, _ := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	bucket, _ := client.Bucket(os.Getenv("OSS_BUCKET"))
 	signedGetURL, _ := bucket.SignURL(user.Avatar, oss.HTTPGet, 600)

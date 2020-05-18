@@ -5,7 +5,8 @@ import "giligili/model"
 // ReviewLog 审核日志序列化器
 type ReviewLog struct {
 	ID             uint   `json:"id"`
-	VideoId        uint   `json:"video_id"`
+	MediaId        uint   `json:"media_id"`
+	MediaType      string `json:"media_type"`
 	StatusForward  string `json:"status_forward"`
 	StatusBackward string `json:"status_backward"`
 	CreatedAt      int64  `json:"created_at"`
@@ -16,7 +17,8 @@ type ReviewLog struct {
 func BuildReviewLog(item model.ReviewLog) ReviewLog {
 	return ReviewLog{
 		ID:             item.ID,
-		VideoId:        item.VideoId,
+		MediaId:        item.MediaId,
+		MediaType:      item.MediaType,
 		StatusForward:  item.StatusForward,
 		StatusBackward: item.StatusBackward,
 		CreatedAt:      item.CreatedAt.Unix(),

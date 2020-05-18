@@ -2,8 +2,11 @@ package api
 
 import (
 	"giligili/model"
+	"giligili/serializer"
+	"giligili/service/ossService"
 	"giligili/service/videoService"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // CreateVideo 视频投稿
@@ -19,13 +22,14 @@ func CreateVideo(c *gin.Context) {
 	}
 }
 
-// ShowVideo 视频详情接口
+// ShowVideo 播放视频用接口
 func ShowVideo(c *gin.Context) {
 	service := videoService.ShowVideoService{}
 	res := service.Show(c.Param("id"))
 	c.JSON(200, res)
 }
 
+// GetVideo 能对所有视频使用的接口，获取视频全部信息
 func GetVideo(c *gin.Context) {
 	service := videoService.ShowVideoService{}
 	res := service.GetVideo(c.Param("id"))
@@ -85,11 +89,48 @@ func DeleteVideo(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+// DeleteVideo 删除用户自己的视频的接口
+func DeleteMyVideo(c *gin.Context) {
+	userIdStr := c.Param("id")
+	temp, _ := strconv.ParseUint(userIdStr, 10, 32)
+	userId := uint(temp)
+
+	userStr, _ := c.Get("user")
+	user, _ := userStr.(*model.User)
+
+	if user.ID != userId {
+		errResponse := serializer.Response{
+			Status: 40003,
+			Data:   nil,
+			Msg:    "只能修改自己的头像",
+			Error:  "verify err",
+		}
+		c.JSON(200, errResponse)
+	}
+
+	service := videoService.DeleteVideoService{}
+	res := service.Delete(user, c.Param("id"))
+	c.JSON(200, res)
+}
+
 // 获取用户视频列表接口
-func ListVideoByUser(c *gin.Context) {
+func ListPassedVideoByUser(c *gin.Context) {
+	userId := c.Param("id")
 	service := videoService.ListVideoService{}
 	if err := c.ShouldBind(&service); err == nil {
-		res := service.ListByUser(c.Param("id"))
+		res := service.ListPassedByUser(userId)
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, ErrorResponse(err))
+	}
+}
+
+// 获取视频雪碧图
+func GetVideoSpritePic(c *gin.Context) {
+	videoId := c.Param("id")
+	service := ossService.GetVideoSpriteService{}
+	if err := c.ShouldBind(&service); err == nil {
+		res := service.CreateSpritePic(videoId)
 		c.JSON(200, res)
 	} else {
 		c.JSON(200, ErrorResponse(err))

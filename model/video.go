@@ -16,7 +16,7 @@ type Video struct {
 	Info        string
 	URL         string
 	Avatar      string
-	Type        string `gorm:"type:enum('education','food','technology')"`
+	Kind        string `gorm:"type:enum('education','food','technology')"`
 	UserId      uint
 	Status      string `gorm:"type:enum('pending_review','passed','not_passed'); default:'pending_review'"`
 	FromOutside bool   `gorm:"default:'false'"`
@@ -59,6 +59,9 @@ func (video *Video) AvatarURL() string {
 
 // VideoURL 视频地址
 func (video *Video) VideoURL() string {
+	if video.FromOutside {
+		return video.URL
+	}
 	client, _ := oss.New(os.Getenv("OSS_END_POINT"), os.Getenv("OSS_ACCESS_KEY_ID"), os.Getenv("OSS_ACCESS_KEY_SECRET"))
 	bucket, _ := client.Bucket(os.Getenv("OSS_BUCKET"))
 	signedGetURL, _ := bucket.SignURL(video.URL, oss.HTTPGet, 600)

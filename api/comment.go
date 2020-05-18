@@ -24,12 +24,12 @@ func PostComment(c *gin.Context) {
 	}
 }
 
-// ListCommentByMedia 从媒体列出评论列表
-func ListCommentsByVideoId(c *gin.Context) {
+//----------------------- ListCommentByMedia 从媒体列出评论列表----------------
+func ListCommentsByMediaId(c *gin.Context) {
 	videoId := c.Param("id")
 	service := commentService.ListCommentService{}
 	if err := c.ShouldBind(&service); err == nil {
-		res := service.ListByVideoId(videoId)
+		res := service.ListByMeidaId(videoId)
 		c.JSON(200, res)
 	} else {
 		c.JSON(200, ErrorResponse(err))

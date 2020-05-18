@@ -6,8 +6,9 @@ import (
 )
 
 type ListCommentService struct {
-	Limit int `form:"limit"`
-	Start int `form:"start"`
+	Limit int    `form:"limit"`
+	Start int    `form:"start"`
+	Type  string `form:"type" json:"type"`
 	//MediaType string `form:"type" json:"type"`
 	//MediaId   uint   `form:"mediaId" json:"media_id"`
 }
@@ -40,8 +41,8 @@ func (service *ListCommentService) ListAll() serializer.Response {
 	return serializer.BuildListResponse(serializer.BuildComments(comments), uint(total))
 }
 
-//ListByMediaId 通过媒体列出评论
-func (service *ListCommentService) ListByVideoId(videoId string) serializer.Response {
+//ListByMediaId 通过媒体Id列出评论
+func (service *ListCommentService) ListByMeidaId(mediaId string) serializer.Response {
 	comments := []model.Comment{}
 	total := 0
 
@@ -50,7 +51,7 @@ func (service *ListCommentService) ListByVideoId(videoId string) serializer.Resp
 	}
 
 	if err := model.DB.Model(model.Comment{}).
-		Where("media_type = ? AND media_id = ?", "video", videoId).
+		Where("media_type = ? AND media_id = ?", service.Type, mediaId).
 		Count(&total).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
@@ -60,7 +61,7 @@ func (service *ListCommentService) ListByVideoId(videoId string) serializer.Resp
 	}
 
 	if err := model.DB.Limit(service.Limit).Offset(service.Start).
-		Where("media_type = ? AND media_id = ?", "video", videoId).
+		Where("media_type = ? AND media_id = ?", service.Type, mediaId).
 		Find(&comments).Error; err != nil {
 		return serializer.Response{
 			Status: 50000,
