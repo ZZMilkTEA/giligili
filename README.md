@@ -1,4 +1,4 @@
-# 我自己项目所上传的站点位置：http://r3mix4lles.cn:9999/ (暂时不开放)
+# 我自己项目所上传的站点位置：http://r3mix4lles.cn:9999/
 本站是从@chengka 大佬的[Singo](https://github.com/bydmm/singo)框架的学习项目所fork下来进行修改的。
 这个项目为自己的毕设所开发，是系统的后端部分。
 ## 目前相对原项目所做的修改
